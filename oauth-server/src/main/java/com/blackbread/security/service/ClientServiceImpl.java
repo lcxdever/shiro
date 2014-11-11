@@ -3,6 +3,7 @@ package com.blackbread.security.service;
 import com.blackbread.security.dao.ClientDao;
 import com.blackbread.security.entity.Client;
 
+import org.apache.log4j.Logger;
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,8 @@ import java.util.UUID;
 @Transactional
 @Service
 public class ClientServiceImpl implements ClientService {
+	private final static Logger logger = Logger
+			.getLogger(ClientServiceImpl.class);
 	@Autowired
 	private ClientDao clientDao;
 
@@ -66,13 +69,24 @@ public class ClientServiceImpl implements ClientService {
 	@Override
 	public void inserUserClient(String userName, String clientID)
 			throws Exception {
-		int r = clientDao.inserUserClient(userName, clientID);
+		int r=0;
+		try {
+			r = clientDao.inserUserClient(userName, clientID);
+		} catch (Exception e) {
+			logger.error(e.getCause().getMessage());
+		}
 		if (r <= 0)
-			throw new Exception("insert exception");
+			throw new Exception("关联异常，请联系管理员");
 	}
 
 	public boolean findUserClient(String userName, String clientID) {
-		int r = clientDao.findUserNameClientID(userName, clientID);
+		int r;
+		try {
+			r = clientDao.findUserNameClientID(userName, clientID);
+		} catch (Exception e) {
+			logger.error(e.getCause().getMessage());
+			throw new RuntimeException("查询客户端ID时候异常，请联系管理员");
+		}
 		if (r == 1)
 			return true;
 		else

@@ -1,9 +1,11 @@
 package com.blackbread.security.web.controller;
 
-import com.blackbread.security.constant.Constants;
-import com.blackbread.security.constant.ErrorEnum;
-import com.blackbread.security.service.ClientService;
-import com.blackbread.security.service.OAuthService;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import javax.management.RuntimeErrorException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
@@ -20,7 +22,6 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,13 +29,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import java.net.URI;
-import java.net.URISyntaxException;
+import com.blackbread.security.constant.ErrorEnum;
+import com.blackbread.security.service.ClientService;
+import com.blackbread.security.service.OAuthService;
 
 /**
  * <p>
@@ -52,6 +50,7 @@ public class AuthorizeController {
 	@Autowired
 	private ClientService clientService;
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping("/authorize")
 	public Object authorize(Model model, HttpServletRequest request)
 			throws URISyntaxException, OAuthSystemException {
@@ -92,14 +91,32 @@ public class AuthorizeController {
 						clientService.inserUserClient(username,
 								oauthRequest.getClientId());
 					} catch (Exception e) {
-						e.printStackTrace();
+						System.out.println(e.getMessage());
 					}
 				} else {
-					// process user dont agree
+					OAuthResponse response = OAuthASResponse
+							.errorResponse(HttpServletResponse.SC_BAD_REQUEST)
+							.setError(OAuthError.CodeResponse.SERVER_ERROR)
+							.setErrorDescription(
+									ErrorEnum.SERVER_ERROR.getCode())
+							.buildJSONMessage();
+					return new ResponseEntity(response.getBody(),
+							HttpStatus.valueOf(response.getResponseStatus()));
 				}
 			}
-			boolean isExit = clientService.findUserClient(username,
-					oauthRequest.getClientId());
+			boolean isExit = false;
+			try {
+				isExit = clientService.findUserClient(username,
+						oauthRequest.getClientId());
+			} catch (Exception e) {
+				OAuthResponse response = OAuthASResponse
+						.errorResponse(HttpServletResponse.SC_BAD_REQUEST)
+						.setError(OAuthError.CodeResponse.SERVER_ERROR)
+						.setErrorDescription(ErrorEnum.SERVER_ERROR.getCode())
+						.buildJSONMessage();
+				return new ResponseEntity(response.getBody(),
+						HttpStatus.valueOf(response.getResponseStatus()));
+			}
 			if (!isExit) {
 				return "userAuthorize";
 			}
