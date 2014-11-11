@@ -13,7 +13,7 @@
     <context:property-placeholder location="classpath:resources.properties"/>
 
     <!-- 扫描注解Bean -->
-    <context:component-scan base-package="com.github.zhangkaitao.shiro.chapter17">
+    <context:component-scan base-package="com.blackbread.security">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 
@@ -77,7 +77,7 @@
 
     <aop:config expose-proxy="true" proxy-target-class="true">
         <!-- 只对业务逻辑层实施事务 -->
-        <aop:pointcut id="txPointcut" expression="execution(* com.github.zhangkaitao.shiro.chapter16..service..*+.*(..))"/>
+        <aop:pointcut id="txPointcut" expression="execution(* com.blackbread.security..service..*+.*(..))"/>
         <aop:advisor id="txAdvisor" advice-ref="txAdvice" pointcut-ref="txPointcut"/>
     </aop:config>
 

@@ -14,7 +14,7 @@
     </bean>
 
     <!-- Realm实现 -->
-    <bean id="oAuth2Realm" class="com.github.zhangkaitao.shiro.chapter18.oauth2.OAuth2Realm">
+    <bean id="oAuth2Realm" class="com.blackbread.oauth.OAuth2Realm">
         <property name="cachingEnabled" value="true"/>
         <property name="authenticationCachingEnabled" value="true"/>
         <property name="authenticationCacheName" value="authenticationCache"/>
@@ -90,7 +90,7 @@
     </bean>
 
     <!-- OAuth2身份验证过滤器 -->
-    <bean id="oAuth2AuthenticationFilter" class="com.github.zhangkaitao.shiro.chapter18.oauth2.OAuth2AuthenticationFilter">
+    <bean id="oAuth2AuthenticationFilter" class="com.blackbread.oauth.OAuth2AuthenticationFilter">
         <property name="authcCodeParam" value="code"/>
         <property name="failureUrl" value="/oauth2Failure.jsp"/>
     </bean>
