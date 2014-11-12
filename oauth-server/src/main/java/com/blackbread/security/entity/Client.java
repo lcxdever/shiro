@@ -13,6 +13,7 @@ public class Client implements Serializable {
     private String clientName;
     private String clientId;
     private String clientSecret;
+    private String clientImage;
 
     public Long getId() {
         return id;
@@ -46,7 +47,15 @@ public class Client implements Serializable {
         this.clientSecret = clientSecret;
     }
 
-    @Override
+    public String getClientImage() {
+		return clientImage;
+	}
+
+	public void setClientImage(String clientImage) {
+		this.clientImage = clientImage;
+	}
+
+	@Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

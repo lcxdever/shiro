@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.blackbread.security.constant.ErrorEnum;
+import com.blackbread.security.entity.Client;
 import com.blackbread.security.service.ClientService;
 import com.blackbread.security.service.OAuthService;
 
@@ -60,14 +61,13 @@ public class AuthorizeController {
 			// 构建OAuth 授权请求
 			OAuthAuthzRequest oauthRequest = new OAuthAuthzRequest(request);
 			// 验证oauthRequest，是否合法
-			oAuthService.validate(oauthRequest);
+			Client client = oAuthService.validate(oauthRequest);
 
 			Subject subject = SecurityUtils.getSubject();
 			// 如果用户没有登录，跳转到登陆页面
 			if (!subject.isAuthenticated() && !subject.isRemembered()) {
 				if (!login(subject, request)) {// 登录失败时跳转到登陆页面
-					model.addAttribute("client", clientService
-							.findByClientId(oauthRequest.getClientId()));
+					model.addAttribute("client", client);
 					return "oauth2login";
 				}
 			}
@@ -77,6 +77,8 @@ public class AuthorizeController {
 			if (agreement == null) {
 				if (!clientService.findUserClient(username,
 						oauthRequest.getClientId())) {
+					model.addAttribute("client", client);
+					model.addAttribute("username", username);
 					return "userAuthorize";
 				}
 			} else {
@@ -86,7 +88,7 @@ public class AuthorizeController {
 					clientService.inserUserClient(username,
 							oauthRequest.getClientId());
 				} else {
-					
+
 					return "error";
 				}
 			}

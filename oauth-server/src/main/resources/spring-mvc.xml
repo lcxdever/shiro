@@ -30,7 +30,7 @@
     <mvc:default-servlet-handler/>
 
     <!-- 静态资源映射 -->
-    <mvc:resources mapping="/static/**" location="/WEB-INF/static/"/>
+    <mvc:resources mapping="/static/**" location="/static/"/>
 
 
     <!-- 默认的视图解析器 在上边的解析错误时使用 (默认使用html)- -->

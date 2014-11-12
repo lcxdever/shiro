@@ -10,7 +10,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 
 import com.blackbread.security.dao.UserDao;
-import com.blackbread.security.exception.ValidateException;
+import com.blackbread.security.entity.Client;
 import com.blackbread.security.utils.StringUtil;
 
 /**
@@ -77,7 +77,7 @@ public class OAuthServiceImpl implements OAuthService {
 	}
 
 	@Override
-	public void validate(OAuthAuthzRequest oauthRequest)
+	public Client validate(OAuthAuthzRequest oauthRequest)
 			throws OAuthProblemException {
 		String errorInfo;
 		String redirectURI = oauthRequest.getRedirectURI();
@@ -93,7 +93,9 @@ public class OAuthServiceImpl implements OAuthService {
 					OAuthError.CodeResponse.UNSUPPORTED_RESPONSE_TYPE,
 					errorInfo);
 		}
-		if (clientService.findByClientId(oauthRequest.getClientId()) == null) {
+		Client client = clientService
+				.findByClientId(oauthRequest.getClientId());
+		if (client == null) {
 			errorInfo = "Can not find the client_id:"
 					+ oauthRequest.getClientId();
 			throw OAuthProblemException.error(
@@ -104,6 +106,6 @@ public class OAuthServiceImpl implements OAuthService {
 			throw OAuthProblemException.error(
 					OAuthError.TokenResponse.INVALID_CLIENT, errorInfo);
 		}
-
+		return client;
 	}
 }

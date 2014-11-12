@@ -86,7 +86,7 @@ public class ClientDaoImpl implements ClientDao {
 
 	@Override
 	public Client findOne(Long clientId) {
-		String sql = "select id, client_name, client_id, client_secret from oauth2_client where id=?";
+		String sql = "select id, client_name, client_id, client_secret,client_image from oauth2_client where id=?";
 		List<Client> clientList = jdbcTemplate.query(sql,
 				new BeanPropertyRowMapper(Client.class), clientId);
 		if (clientList.size() == 0) {
@@ -97,13 +97,13 @@ public class ClientDaoImpl implements ClientDao {
 
 	@Override
 	public List<Client> findAll() {
-		String sql = "select id, client_name, client_id, client_secret from oauth2_client";
+		String sql = "select id, client_name, client_id, client_secret,client_image from oauth2_client";
 		return jdbcTemplate.query(sql, new BeanPropertyRowMapper(Client.class));
 	}
 
 	@Override
 	public Client findByClientId(String clientId) {
-		String sql = "select id, client_name, client_id, client_secret from oauth2_client where client_id=?";
+		String sql = "select id, client_name, client_id, client_secret,client_image from oauth2_client where client_id=?";
 		List<Client> clientList = jdbcTemplate.query(sql,
 				new BeanPropertyRowMapper(Client.class), clientId);
 		if (clientList.size() == 0) {
@@ -114,7 +114,7 @@ public class ClientDaoImpl implements ClientDao {
 
 	@Override
 	public Client findByClientSecret(String clientSecret) {
-		String sql = "select id, client_name, client_id, client_secret from oauth2_client where client_secret=?";
+		String sql = "select id, client_name, client_id, client_secret,client_image from oauth2_client where client_secret=?";
 		List<Client> clientList = jdbcTemplate.query(sql,
 				new BeanPropertyRowMapper(Client.class), clientSecret);
 		if (clientList.size() == 0) {

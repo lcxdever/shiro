@@ -1,27 +1,185 @@
-.table {
-    width:80%;
-    font:14px;
-    color:#333333;
-    text-align:center;
-    border-collapse:collapse;
+/**reset**/
+body {
+font: 12px/1.5 Tahoma,Helvetica,Arial,'\5B8B\4F53',sans-serif;
 }
-.table td,.table th{
-    border:1px solid #333333;
-    padding: 10px;
+html,legend {
+	color: #404040;
+	background: #fff;
+}
+a {
+	color: #36c;
+	text-decoration: none;
+}
+a: hover {
+	color: #f60;
+	text-decoration: underline;
+}
+.content{
+	width: 400px;
+	margin: 0 auto;
+}
+.header{
+	height: 63px;
+	line-height:63px;
+	color:white;
+	background: url(https://g.alicdn.com/sj/topcontainer/0.0.4/images/T15yB4XbJlXXXXXXXX-4-63.jpg) repeat-x top left;
+}
+.piao{
+	line-height: 24px;
+	padding-top: 12px;
+}
+.piao strong{
+	font-weight: bold;
+}
+.img_text{
+	border-bottom: 1px dashed #e6e6e6;
+	position: relative;
+	height: 80px;
+	padding-bottom: 20px;
+	margin-top: 20px;
+}
+.img_text .left_ad, .img_text .right_ad{
+	position: absolute;
+	top: 0;
+}
+.img_text .left_ad{
+	left: 35px;
+}
+.img_text .right_ad{
+	right: 35px;
+}
+.img_text .middle_text{
+	padding: 0 140px;
+	text-align: center;
+	line-height: 18px;
 }
 
-.message {
-    background: #eee;
-    border: 1px solid #eee;
-    margin: 10px 0;
-    padding: 10px;
+.change_user{
+	line-height: 50px;
+	text-align: center;
+}
+.change_user a{
+	margin-left: 6px;
+}
+.footer{
+	border-top: 1px solid #fe8d3f;
+	background-color: #f3f3f3;
+	line-height: 58px;
+	text-align: center;
 }
 
-.form-group {
-    margin: 10px 0;
+.footer button.sh{
+	background-position: 0 0;
+    color: #FFFFFF;
+}
+.footer button.sh:hover{
+	background-position: 0 -27px;
 }
 
-.form-group label {
-    width: 130px;
-    float: left;
+body {
+    font: 12px/1.5 Tahoma,Helvetica,Arial,'\5B8B\4F53',sans-serif;
 }
+html, legend {
+    background: none repeat scroll 0 0 #FFFFFF;
+    color: #404040;
+}
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, button, textarea, p, blockquote, th, td {
+    margin: 0;
+    padding: 0;
+}
+li {
+    list-style: none outside none;
+}
+caption, th {
+    text-align: left;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-size: 100%;
+}
+h1 {
+    font-size: 18px;
+}
+h2 {
+    font-size: 16px;
+}
+h3 {
+    font-size: 14px;
+}
+input, button, textarea, select {
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+}
+select, input, button, textarea {
+    font: 100% Tahoma,Helvetica,Arial,sans-serif;
+}
+a {
+    color: #3366CC;
+    text-decoration: none;
+}
+a:hover {
+    color: #FF6600;
+    text-decoration: underline;
+}
+html, body {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.header{
+	height: 63px;
+	line-height:63px;
+	color:white;
+	background: url(https://g.alicdn.com/sj/topcontainer/0.0.4/images/T15yB4XbJlXXXXXXXX-4-63.jpg) repeat-x top left;
+}
+.header h1{
+	width: 400px;
+	height: 63px;
+	margin: 0 auto;
+	background: url() repeat-x top left;
+}
+
+.img_text .middle_text .m_top{
+	background: url(https://g.alicdn.com/sj/topcontainer/0.0.4/images/T1pyR4XntiXXXXXXXX-120-11.png) no-repeat bottom center;
+	padding-bottom: 12px;
+	width: 120px;
+	margin-bottom: 12px;
+}
+.img_text .middle_text .m_bottom{
+	background: url(https://g.alicdn.com/sj/topcontainer/0.0.4/images/T1ox04XjBrXXXXXXXX-120-11.png) no-repeat bottom center;
+	padding-bottom: 12px;
+	width: 120px;
+}
+.cont {
+		font-size: 12px;
+		width: 30em;
+		word-wrap: break-word;
+		margin: 5px 0;
+	}
+.auth_option p {
+		padding-left: 20px;
+		height: 20px;
+		line-height: 20px;
+		margin: 5px 0;
+	}
+.auth_option .normal {
+		background: url("https://g.alicdn.com/sj/topcontainer/0.0.4/images/T1u297Xo8uXXaSQP_X-16-16.png") no-repeat scroll 0 0 transparent;
+		_background-image: url(https://g.alicdn.com/sj/topcontainer/0.0.4/images/T1s.yGXmxBXXaSQP_X-16-16.png);
+}
+.auth_option .detail {
+		color: #999;
+	}
+.footer button{
+    background: url(https://g.alicdn.com/sj/topcontainer/0.0.4/images/T1CjV4XepkXXXXXXXX-116-54.png) no-repeat scroll 0 0 transparent;
+    width: 58px;
+	border: none;
+    height: 27px;
+    line-height: 29px;
+    overflow: hidden;
+    vertical-align: middle;
+	margin-left: 5px;
+	background-position: -58px 0;
+}
+
+
+
+

@@ -3,6 +3,8 @@ package com.blackbread.security.service;
 import org.apache.oltu.oauth2.as.request.OAuthAuthzRequest;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 
+import com.blackbread.security.entity.Client;
+
 /**
  * <p>
  * User: Zhang Kaitao
@@ -34,7 +36,14 @@ public interface OAuthService {
 
 	public boolean checkClientSecret(String clientSecret);
 
-	public void validate(OAuthAuthzRequest oauthRequest)
+	/**
+	 * 用于验证客户端url调用参数信息，并返回请求的客户端信息
+	 * 
+	 * @param oauthRequest
+	 * @return
+	 * @throws OAuthProblemException
+	 */
+	public Client validate(OAuthAuthzRequest oauthRequest)
 			throws OAuthProblemException;
 
 }
