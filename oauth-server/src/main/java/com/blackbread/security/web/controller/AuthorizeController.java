@@ -2,8 +2,9 @@ package com.blackbread.security.web.controller;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.management.RuntimeErrorException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -17,7 +18,6 @@ import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.apache.oltu.oauth2.common.message.types.ResponseType;
-import org.apache.oltu.oauth2.common.utils.OAuthUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
@@ -29,6 +29,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.blackbread.security.constant.ErrorEnum;
 import com.blackbread.security.service.ClientService;
@@ -58,17 +59,8 @@ public class AuthorizeController {
 		try {
 			// 构建OAuth 授权请求
 			OAuthAuthzRequest oauthRequest = new OAuthAuthzRequest(request);
-
-			// 检查传入的客户端id是否正确
-			if (!oAuthService.checkClientId(oauthRequest.getClientId())) {
-				OAuthResponse response = OAuthASResponse
-						.errorResponse(HttpServletResponse.SC_BAD_REQUEST)
-						.setError(OAuthError.TokenResponse.INVALID_CLIENT)
-						.setErrorDescription(ErrorEnum.INVALID_CLIENT.getCode())
-						.buildJSONMessage();
-				return new ResponseEntity(response.getBody(),
-						HttpStatus.valueOf(response.getResponseStatus()));
-			}
+			// 验证oauthRequest，是否合法
+			oAuthService.validate(oauthRequest);
 
 			Subject subject = SecurityUtils.getSubject();
 			// 如果用户没有登录，跳转到登陆页面
@@ -81,44 +73,22 @@ public class AuthorizeController {
 			}
 			String username = (String) subject.getPrincipal();
 
-			boolean userauthorize = Boolean.valueOf(request
-					.getParameter("userauthorize"));
-			if (userauthorize) {
-				boolean agreement = Boolean.valueOf(request
-						.getParameter("agreement"));
-				if (agreement) {
-					try {
-						clientService.inserUserClient(username,
-								oauthRequest.getClientId());
-					} catch (Exception e) {
-						System.out.println(e.getMessage());
-					}
-				} else {
-					OAuthResponse response = OAuthASResponse
-							.errorResponse(HttpServletResponse.SC_BAD_REQUEST)
-							.setError(OAuthError.CodeResponse.SERVER_ERROR)
-							.setErrorDescription(
-									ErrorEnum.SERVER_ERROR.getCode())
-							.buildJSONMessage();
-					return new ResponseEntity(response.getBody(),
-							HttpStatus.valueOf(response.getResponseStatus()));
+			String agreement = request.getParameter("agreement");
+			if (agreement == null) {
+				if (!clientService.findUserClient(username,
+						oauthRequest.getClientId())) {
+					return "userAuthorize";
 				}
-			}
-			boolean isExit = false;
-			try {
-				isExit = clientService.findUserClient(username,
-						oauthRequest.getClientId());
-			} catch (Exception e) {
-				OAuthResponse response = OAuthASResponse
-						.errorResponse(HttpServletResponse.SC_BAD_REQUEST)
-						.setError(OAuthError.CodeResponse.SERVER_ERROR)
-						.setErrorDescription(ErrorEnum.SERVER_ERROR.getCode())
-						.buildJSONMessage();
-				return new ResponseEntity(response.getBody(),
-						HttpStatus.valueOf(response.getResponseStatus()));
-			}
-			if (!isExit) {
-				return "userAuthorize";
+			} else {
+				boolean agreement2 = Boolean.valueOf(request
+						.getParameter("agreement"));
+				if (agreement2) {
+					clientService.inserUserClient(username,
+							oauthRequest.getClientId());
+				} else {
+					
+					return "error";
+				}
 			}
 			// 生成授权码
 			String authorizationCode = null;
@@ -131,7 +101,6 @@ public class AuthorizeController {
 				authorizationCode = oauthIssuerImpl.authorizationCode();
 				oAuthService.addAuthCode(authorizationCode, username);
 			}
-
 			// 进行OAuth响应构建
 			OAuthASResponse.OAuthAuthorizationResponseBuilder builder = OAuthASResponse
 					.authorizationResponse(request,
@@ -141,7 +110,6 @@ public class AuthorizeController {
 			// 得到到客户端重定向地址
 			String redirectURI = oauthRequest
 					.getParam(OAuth.OAUTH_REDIRECT_URI);
-
 			// 构建响应
 			final OAuthResponse response = builder.location(redirectURI)
 					.buildQueryMessage();
@@ -152,25 +120,27 @@ public class AuthorizeController {
 			return new ResponseEntity(headers, HttpStatus.valueOf(response
 					.getResponseStatus()));
 		} catch (OAuthProblemException e) {
-
-			// 出错处理
-			String redirectUri = e.getRedirectUri();
-			if (OAuthUtils.isEmpty(redirectUri)) {
-				// 告诉客户端没有传入redirectUri直接报错
-				return new ResponseEntity(
-						"OAuth callback url needs to be provided by client!!!",
-						HttpStatus.NOT_FOUND);
-			}
-
-			// 返回错误消息（如?error=）
-			final OAuthResponse response = OAuthASResponse
-					.errorResponse(HttpServletResponse.SC_FOUND).error(e)
-					.location(redirectUri).buildQueryMessage();
-			HttpHeaders headers = new HttpHeaders();
-			headers.setLocation(new URI(response.getLocationUri()));
-			return new ResponseEntity(headers, HttpStatus.valueOf(response
-					.getResponseStatus()));
+			return ExceptionHandler(e.getError(), e.getDescription());
+		} catch (Exception e) {
+			return ExceptionHandler(OAuthError.CodeResponse.SERVER_ERROR,
+					ErrorEnum.SERVER_ERROR.getDestcrption());
 		}
+	}
+
+	private Object ExceptionHandler(String error, String description) {
+		// final OAuthResponse response = OAuthASResponse
+		// .errorResponse(HttpServletResponse.SC_BAD_REQUEST)
+		// .setError(e.getError())
+		// .setErrorDescription(e.getDescription())
+		// .buildJSONMessage();
+		// return new ResponseEntity(response.getBody(),
+		// HttpStatus.valueOf(response
+		// .getResponseStatus()));
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("error", error);
+		map.put("error_description", description);
+		ModelAndView mv = new ModelAndView("error", map);
+		return mv;
 	}
 
 	private boolean login(Subject subject, HttpServletRequest request) {

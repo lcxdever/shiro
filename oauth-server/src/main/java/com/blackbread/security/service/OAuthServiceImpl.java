@@ -1,11 +1,17 @@
 package com.blackbread.security.service;
 
+import org.apache.oltu.oauth2.as.request.OAuthAuthzRequest;
+import org.apache.oltu.oauth2.common.error.OAuthError;
+import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
+import org.apache.oltu.oauth2.common.message.types.ResponseType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 
 import com.blackbread.security.dao.UserDao;
+import com.blackbread.security.exception.ValidateException;
+import com.blackbread.security.utils.StringUtil;
 
 /**
  * <p>
@@ -61,11 +67,6 @@ public class OAuthServiceImpl implements OAuthService {
 	}
 
 	@Override
-	public boolean checkClientId(String clientId) {
-		return clientService.findByClientId(clientId) != null;
-	}
-
-	@Override
 	public boolean checkClientSecret(String clientSecret) {
 		return clientService.findByClientSecret(clientSecret) != null;
 	}
@@ -73,5 +74,36 @@ public class OAuthServiceImpl implements OAuthService {
 	@Override
 	public long getExpireIn() {
 		return 3600L;
+	}
+
+	@Override
+	public void validate(OAuthAuthzRequest oauthRequest)
+			throws OAuthProblemException {
+		String errorInfo;
+		String redirectURI = oauthRequest.getRedirectURI();
+		if (StringUtil.isEmpty(redirectURI)) {
+			errorInfo = "redirect_uri is empty";
+			throw OAuthProblemException.error(
+					OAuthError.CodeResponse.INVALID_REQUEST, errorInfo);
+		}
+		if (!ResponseType.CODE.toString()
+				.equals(oauthRequest.getResponseType())) {
+			errorInfo = "unsupported response type,the response type must code";
+			throw OAuthProblemException.error(
+					OAuthError.CodeResponse.UNSUPPORTED_RESPONSE_TYPE,
+					errorInfo);
+		}
+		if (clientService.findByClientId(oauthRequest.getClientId()) == null) {
+			errorInfo = "Can not find the client_id:"
+					+ oauthRequest.getClientId();
+			throw OAuthProblemException.error(
+					OAuthError.CodeResponse.INVALID_REQUEST, errorInfo);
+		}
+		if (oauthRequest.getRedirectURI().equals("abc")) {
+			errorInfo = "application callback can not match the redirect_uri";
+			throw OAuthProblemException.error(
+					OAuthError.TokenResponse.INVALID_CLIENT, errorInfo);
+		}
+
 	}
 }

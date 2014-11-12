@@ -53,14 +53,7 @@ public class AccessTokenController {
             OAuthTokenRequest oauthRequest = new OAuthTokenRequest(request);
 
             //检查提交的客户端id是否正确
-            if (!oAuthService.checkClientId(oauthRequest.getClientId())) {
-                OAuthResponse response =
-                        OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST)
-                                .setError(OAuthError.TokenResponse.INVALID_CLIENT)
-                                .setErrorDescription(ErrorEnum.INVALID_CLIENT.getCode())
-                                .buildJSONMessage();
-                return new ResponseEntity(response.getBody(), HttpStatus.valueOf(response.getResponseStatus()));
-            }
+//            oAuthService.validate(oauthRequest);
 
             // 检查客户端安全KEY是否正确
             if (!oAuthService.checkClientSecret(oauthRequest.getClientSecret())) {
