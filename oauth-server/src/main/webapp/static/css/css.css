@@ -154,20 +154,22 @@ html, body {
 		width: 30em;
 		word-wrap: break-word;
 		margin: 5px 0;
+		line-height: 24px;
 	}
 .auth_option p {
-		padding-left: 20px;
-		height: 20px;
-		line-height: 20px;
-		margin: 5px 0;
-	}
+	padding-left: 20px;
+	height: 20px;
+	line-height: 20px;
+	margin: 5px 0;
+}
 .auth_option .normal {
-		background: url("https://g.alicdn.com/sj/topcontainer/0.0.4/images/T1u297Xo8uXXaSQP_X-16-16.png") no-repeat scroll 0 0 transparent;
-		_background-image: url(https://g.alicdn.com/sj/topcontainer/0.0.4/images/T1s.yGXmxBXXaSQP_X-16-16.png);
+	background: url("https://g.alicdn.com/sj/topcontainer/0.0.4/images/T1u297Xo8uXXaSQP_X-16-16.png") no-repeat scroll 0 0 transparent;
+	_background-image: url(https://g.alicdn.com/sj/topcontainer/0.0.4/images/T1s.yGXmxBXXaSQP_X-16-16.png);
+	color: #000;
 }
 .auth_option .detail {
-		color: #999;
-	}
+	color: #999;
+}
 .footer button{
     background: url(https://g.alicdn.com/sj/topcontainer/0.0.4/images/T1CjV4XepkXXXXXXXX-116-54.png) no-repeat scroll 0 0 transparent;
     width: 58px;
@@ -179,7 +181,3 @@ html, body {
 	margin-left: 5px;
 	background-position: -58px 0;
 }
-
-
-
-
