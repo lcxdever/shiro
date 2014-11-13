@@ -18,3 +18,10 @@ create table oauth2_client (
   constraint pk_oauth2_client primary key(id)
 ) charset=utf8 ENGINE=InnoDB;
 create index idx_oauth2_client_client_id on oauth2_client(client_id);
+
+DROP TABLE IF EXISTS `oauth2_user_client`;
+CREATE TABLE `oauth2_user_client` (
+  `username` varchar(100) NOT NULL,
+  `client_id` varchar(50) NOT NULL,
+  PRIMARY KEY (`username`,`client_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

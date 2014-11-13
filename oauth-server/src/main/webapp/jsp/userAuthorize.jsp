@@ -21,8 +21,8 @@
 				<div class="img_text">
 					<div class="left_ad"><img src="${client.clientImage}"></div>
 					<div class="middle_text">
-						<div class="m_top">提供授权的淘宝信息</div>
-						<div class="m_bottom">提供淘宝增值服务</div>
+						<div class="m_top">提供授权的用户信息</div>
+						<div class="m_bottom">提供应用增值服务</div>
 					</div>
 					<div class="right_ad">
 						<img src="static/images/example2.png" />
@@ -37,8 +37,8 @@
 				</div>
 			</div>
 			<div class="cont">
-				授权后表明您已经同意<a target="_blank" href="">授权须知</a><br /> 您也可以随时在<a
-					target="_blank" href="">授权管理</a>里查看和取消授权
+				授权后表明您已经同意<a target="_blank" href="javascript:void(0)">授权须知</a><br /> 您也可以随时在<a
+					target="_blank" href="javascript:void(0)">授权管理</a>里查看和取消授权
 			</div>
 			<p class="change_user">
 				账户名：${username}<a href="">换个账户名？</a>

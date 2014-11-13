@@ -37,12 +37,10 @@ import com.blackbread.security.service.ClientService;
 import com.blackbread.security.service.OAuthService;
 
 /**
- * <p>
- * User: Zhang Kaitao
- * <p>
- * Date: 14-2-16
- * <p>
- * Version: 1.0
+ * @Description:oauth2.0用于获取code
+ * @author     :blackbread
+ * @time       :2014年11月13日 下午10:49:40
+ * @version    :0.1
  */
 @Controller
 public class AuthorizeController {
@@ -72,7 +70,7 @@ public class AuthorizeController {
 				}
 			}
 			String username = (String) subject.getPrincipal();
-
+			boolean success = true;
 			String agreement = request.getParameter("agreement");
 			if (agreement == null) {
 				if (!clientService.findUserClient(username,
@@ -88,34 +86,35 @@ public class AuthorizeController {
 					clientService.inserUserClient(username,
 							oauthRequest.getClientId());
 				} else {
-
-					return "error";
+					success = false;
 				}
-			}
-			// 生成授权码
-			String authorizationCode = null;
-			// responseType目前仅支持CODE，另外还有TOKEN
-			String responseType = oauthRequest
-					.getParam(OAuth.OAUTH_RESPONSE_TYPE);
-			if (responseType.equals(ResponseType.CODE.toString())) {
-				OAuthIssuerImpl oauthIssuerImpl = new OAuthIssuerImpl(
-						new MD5Generator());
-				authorizationCode = oauthIssuerImpl.authorizationCode();
-				oAuthService.addAuthCode(authorizationCode, username);
 			}
 			// 进行OAuth响应构建
 			OAuthASResponse.OAuthAuthorizationResponseBuilder builder = OAuthASResponse
 					.authorizationResponse(request,
 							HttpServletResponse.SC_FOUND);
-			// 设置授权码
-			builder.setCode(authorizationCode);
+			if (success) {
+				// 生成授权码
+				String authorizationCode = null;
+				// responseType目前仅支持CODE，另外还有TOKEN
+				String responseType = oauthRequest
+						.getParam(OAuth.OAUTH_RESPONSE_TYPE);
+				if (responseType.equals(ResponseType.CODE.toString())) {
+					OAuthIssuerImpl oauthIssuerImpl = new OAuthIssuerImpl(
+							new MD5Generator());
+					authorizationCode = oauthIssuerImpl.authorizationCode();
+					oAuthService.addAuthCode(authorizationCode, username);
+				}
+				builder.setCode(authorizationCode);
+			} else {
+				builder.setParam("error", OAuthError.CodeResponse.ACCESS_DENIED);
+				builder.setParam("error_description", "authorize reject");
+			}
 			// 得到到客户端重定向地址
-			String redirectURI = oauthRequest
-					.getParam(OAuth.OAUTH_REDIRECT_URI);
+			String redirectURI = oauthRequest.getRedirectURI();
 			// 构建响应
 			final OAuthResponse response = builder.location(redirectURI)
 					.buildQueryMessage();
-
 			// 根据OAuthResponse返回ResponseEntity响应
 			HttpHeaders headers = new HttpHeaders();
 			headers.setLocation(new URI(response.getLocationUri()));
@@ -130,14 +129,6 @@ public class AuthorizeController {
 	}
 
 	private Object ExceptionHandler(String error, String description) {
-		// final OAuthResponse response = OAuthASResponse
-		// .errorResponse(HttpServletResponse.SC_BAD_REQUEST)
-		// .setError(e.getError())
-		// .setErrorDescription(e.getDescription())
-		// .buildJSONMessage();
-		// return new ResponseEntity(response.getBody(),
-		// HttpStatus.valueOf(response
-		// .getResponseStatus()));
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("error", error);
 		map.put("error_description", description);
@@ -153,18 +144,16 @@ public class AuthorizeController {
 		String password = request.getParameter("password");
 		boolean rememberMe = Boolean
 				.valueOf(request.getParameter("rememberMe"));
-
 		if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
 			return false;
 		}
-
 		UsernamePasswordToken token = new UsernamePasswordToken(username,
 				password, rememberMe);
 		try {
 			subject.login(token);
 			return true;
 		} catch (Exception e) {
-			request.setAttribute("error", "登录失败:" + e.getClass().getName());
+			request.setAttribute("error", "登录失败:" + e.getCause().getMessage());
 			return false;
 		}
 	}
