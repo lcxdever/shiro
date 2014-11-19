@@ -114,11 +114,11 @@
                 / = anon
                 /login = authc
                 /logout = logout
-
                 /authorize=anon
                 /accessToken=anon
                 /userInfo=anon
-                /** = user
+                /jsp/** = user
+                /static/**=anon
             </value>
         </property>
     </bean>
