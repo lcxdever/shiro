@@ -129,7 +129,7 @@ html, body {
 	height: 63px;
 	line-height:63px;
 	color:white;
-	background: url(https://g.alicdn.com/sj/topcontainer/0.0.4/images/T15yB4XbJlXXXXXXXX-4-63.jpg) repeat-x top left;
+	background: url(../images/T15yB4XbJlXXXXXXXX-4-63.jpg) repeat-x top left;
 }
 .header h1{
 	width: 400px;
@@ -139,13 +139,13 @@ html, body {
 }
 
 .img_text .middle_text .m_top{
-	background: url(https://g.alicdn.com/sj/topcontainer/0.0.4/images/T1pyR4XntiXXXXXXXX-120-11.png) no-repeat bottom center;
+	background: url(../images/left.png) no-repeat bottom center;
 	padding-bottom: 12px;
 	width: 120px;
 	margin-bottom: 12px;
 }
 .img_text .middle_text .m_bottom{
-	background: url(https://g.alicdn.com/sj/topcontainer/0.0.4/images/T1ox04XjBrXXXXXXXX-120-11.png) no-repeat bottom center;
+	background: url(../images/right.png) no-repeat bottom center;
 	padding-bottom: 12px;
 	width: 120px;
 }
@@ -163,15 +163,15 @@ html, body {
 	margin: 5px 0;
 }
 .auth_option .normal {
-	background: url("https://g.alicdn.com/sj/topcontainer/0.0.4/images/T1u297Xo8uXXaSQP_X-16-16.png") no-repeat scroll 0 0 transparent;
-	_background-image: url(https://g.alicdn.com/sj/topcontainer/0.0.4/images/T1s.yGXmxBXXaSQP_X-16-16.png);
+	background: url("../images/T1u297Xo8uXXaSQP_X-16-16.png") no-repeat scroll 0 0 transparent;
+	_background-image: url(../images/T1s.yGXmxBXXaSQP_X-16-16.png);
 	color: #000;
 }
 .auth_option .detail {
 	color: #999;
 }
 .footer button{
-    background: url(https://g.alicdn.com/sj/topcontainer/0.0.4/images/T1CjV4XepkXXXXXXXX-116-54.png) no-repeat scroll 0 0 transparent;
+    background: url(../images/T1CjV4XepkXXXXXXXX-116-54.png) no-repeat scroll 0 0 transparent;
     width: 58px;
 	border: none;
     height: 27px;
