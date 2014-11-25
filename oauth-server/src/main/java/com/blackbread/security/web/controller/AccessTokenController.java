@@ -29,11 +29,12 @@ import com.blackbread.security.constant.Constants;
 import com.blackbread.security.constant.ErrorEnum;
 import com.blackbread.security.service.OAuthService;
 import com.blackbread.security.service.UserService;
-
 /**
- * <p>User: Zhang Kaitao
- * <p>Date: 14-2-16
- * <p>Version: 1.0
+ * 
+ * @Description:获取accessstoken过程
+ * @author     :blackbread
+ * @time       :2014年11月25日 下午10:02:23
+ * @version    :
  */
 @RestController
 public class AccessTokenController {
@@ -44,7 +45,8 @@ public class AccessTokenController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping("/accessToken")
+    @SuppressWarnings("rawtypes")
+	@RequestMapping("/accessToken")
     public HttpEntity token(HttpServletRequest request)
             throws URISyntaxException, OAuthSystemException, UnsupportedEncodingException {
 
@@ -56,7 +58,7 @@ public class AccessTokenController {
 //            oAuthService.validate(oauthRequest);
 
             // 检查客户端安全KEY是否正确
-            if (!oAuthService.checkClientSecret(oauthRequest.getClientSecret())) {
+            if (!oAuthService.checkClientSecret(oauthRequest.getClientId(),oauthRequest.getClientSecret())) {
                 OAuthResponse response =
                         OAuthASResponse.errorResponse(HttpServletResponse.SC_UNAUTHORIZED)
                                 .setError(OAuthError.TokenResponse.UNAUTHORIZED_CLIENT)
@@ -82,7 +84,6 @@ public class AccessTokenController {
             OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
             final String accessToken = oauthIssuerImpl.accessToken();
             oAuthService.addAccessToken(accessToken, oAuthService.getUsernameByAuthCode(authCode));
-
 
             //生成OAuth响应
             OAuthResponse response = OAuthASResponse

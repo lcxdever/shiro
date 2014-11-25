@@ -36,6 +36,6 @@ public interface ClientService {
 
 	Client findByClientId(String clientId);
 
-	Client findByClientSecret(String clientSecret);
+	Client findByClientSecret(String clientID,String clientSecret);
 
 }

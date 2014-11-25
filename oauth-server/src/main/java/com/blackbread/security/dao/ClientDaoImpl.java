@@ -113,10 +113,11 @@ public class ClientDaoImpl implements ClientDao {
 	}
 
 	@Override
-	public Client findByClientSecret(String clientSecret) {
-		String sql = "select id, client_name, client_id, client_secret,client_image from oauth2_client where client_secret=?";
+	public Client findByClientSecret(String clientID, String clientSecret) {
+		String sql = "select id, client_name, client_id, client_secret,client_image from oauth2_client where client_id=? and client_secret=?";
 		List<Client> clientList = jdbcTemplate.query(sql,
-				new BeanPropertyRowMapper(Client.class), clientSecret);
+				new BeanPropertyRowMapper(Client.class), new Object[] {
+						clientID, clientSecret });
 		if (clientList.size() == 0) {
 			return null;
 		}

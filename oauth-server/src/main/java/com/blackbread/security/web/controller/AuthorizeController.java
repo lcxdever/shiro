@@ -38,9 +38,9 @@ import com.blackbread.security.service.OAuthService;
 
 /**
  * @Description:oauth2.0用于获取code
- * @author     :blackbread
- * @time       :2014年11月13日 下午10:49:40
- * @version    :0.1
+ * @author :blackbread
+ * @time :2014年11月13日 下午10:49:40
+ * @version :0.1
  */
 @Controller
 public class AuthorizeController {
@@ -70,9 +70,9 @@ public class AuthorizeController {
 				}
 			}
 			String username = (String) subject.getPrincipal();
-			boolean success = true;
-			String agreement = request.getParameter("agreement");
-			if (agreement == null) {
+			boolean agreement = true;
+			String agreement2 = request.getParameter("agreement");
+			if (agreement2 == null) {
 				if (!clientService.findUserClient(username,
 						oauthRequest.getClientId())) {
 					model.addAttribute("client", client);
@@ -80,20 +80,17 @@ public class AuthorizeController {
 					return "userAuthorize";
 				}
 			} else {
-				boolean agreement2 = Boolean.valueOf(request
-						.getParameter("agreement"));
-				if (agreement2) {
+				agreement = Boolean.valueOf(agreement2);
+				if (agreement) {
 					clientService.inserUserClient(username,
 							oauthRequest.getClientId());
-				} else {
-					success = false;
 				}
 			}
 			// 进行OAuth响应构建
 			OAuthASResponse.OAuthAuthorizationResponseBuilder builder = OAuthASResponse
 					.authorizationResponse(request,
 							HttpServletResponse.SC_FOUND);
-			if (success) {
+			if (agreement) {
 				// 生成授权码
 				String authorizationCode = null;
 				// responseType目前仅支持CODE，另外还有TOKEN
@@ -103,6 +100,7 @@ public class AuthorizeController {
 					OAuthIssuerImpl oauthIssuerImpl = new OAuthIssuerImpl(
 							new MD5Generator());
 					authorizationCode = oauthIssuerImpl.authorizationCode();
+					System.out.println(authorizationCode);
 					oAuthService.addAuthCode(authorizationCode, username);
 				}
 				builder.setCode(authorizationCode);

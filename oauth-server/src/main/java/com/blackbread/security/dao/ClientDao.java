@@ -30,6 +30,6 @@ public interface ClientDao {
 
 	Client findByClientId(String clientId);
 
-	Client findByClientSecret(String clientSecret);
+	Client findByClientSecret(String clientID,String clientSecret);
 
 }

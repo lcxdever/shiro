@@ -110,21 +110,17 @@ button:hover {
 								<a href="javascript:void(0)" target="_blank" id="forget-pw-safe" class="forget-pw">忘记登录密码?</a>
 								<input type="password" class="input_txt" name="password">
 							</div>
-							<div class="field">
-								<label for="autologin" class="label" style="float: left">下次自动登录：</label>
-								<input type="checkbox" name="autologin"
-									style="float: left; margin-top: 3px" checked="checked"><br />
-							</div>
-							<div class="field">
+							<div class="field" style="margin-top: 10px">
 								<input type="hidden" name="rememberMe">
 								<button type="submit">登 录</button>
 							</div>
+							<div class="field" style="position: relative">
+								<label for="autologin" class="label" style="float: left">下次自动登录：</label>
+								<input type="checkbox" name="autologin"
+									style="float: left; margin-top: 3px" ><br />
+								<a href="javascript:void(0)" target="_blank" id="forget-pw-safe" class="forget-pw">免费注册</a>
+							</div>
 						</form>
-						<ul class="entries">
-							<li id="registerUrl_1" class="register"><a
-								href="javascript:void(0)"
-								target="_blank" tabindex="8">免费注册</a></li>
-						</ul>
 					</div>
 				</div>
 			</div>

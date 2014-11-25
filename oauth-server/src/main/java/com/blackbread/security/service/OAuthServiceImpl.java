@@ -67,8 +67,8 @@ public class OAuthServiceImpl implements OAuthService {
 	}
 
 	@Override
-	public boolean checkClientSecret(String clientSecret) {
-		return clientService.findByClientSecret(clientSecret) != null;
+	public boolean checkClientSecret(String clientID,String clientSecret) {
+		return clientService.findByClientSecret(clientID,clientSecret) != null;
 	}
 
 	@Override

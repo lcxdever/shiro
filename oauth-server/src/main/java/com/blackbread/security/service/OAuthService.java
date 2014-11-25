@@ -34,7 +34,7 @@ public interface OAuthService {
 	// auth code / access token 过期时间
 	long getExpireIn();
 
-	public boolean checkClientSecret(String clientSecret);
+	public boolean checkClientSecret(String clientID,String clientSecret);
 
 	/**
 	 * 用于验证客户端url调用参数信息，并返回请求的客户端信息
