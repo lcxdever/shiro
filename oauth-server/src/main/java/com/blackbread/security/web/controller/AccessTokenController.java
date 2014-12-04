@@ -2,6 +2,8 @@ package com.blackbread.security.web.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,83 +26,68 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.blackbread.security.constant.Constants;
 import com.blackbread.security.constant.ErrorEnum;
 import com.blackbread.security.service.OAuthService;
 import com.blackbread.security.service.UserService;
+
 /**
  * 
  * @Description:获取accessstoken过程
- * @author     :blackbread
- * @time       :2014年11月25日 下午10:02:23
- * @version    :
+ * @author :blackbread
+ * @time :2014年11月25日 下午10:02:23
+ * @version :
  */
 @RestController
 public class AccessTokenController {
 
-    @Autowired
-    private OAuthService oAuthService;
+	@Autowired
+	private OAuthService oAuthService;
 
-    @Autowired
-    private UserService userService;
+	@Autowired
+	private UserService userService;
 
-    @SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@RequestMapping("/accessToken")
-    public HttpEntity token(HttpServletRequest request)
-            throws URISyntaxException, OAuthSystemException, UnsupportedEncodingException {
+	public Object token(HttpServletRequest request) throws OAuthSystemException {
 
-        try {
-            //构建OAuth请求
-            OAuthTokenRequest oauthRequest = new OAuthTokenRequest(request);
-
-            //检查提交的客户端id是否正确
-//            oAuthService.validate(oauthRequest);
-
-            // 检查客户端安全KEY是否正确
-            if (!oAuthService.checkClientSecret(oauthRequest.getClientId(),oauthRequest.getClientSecret())) {
-                OAuthResponse response =
-                        OAuthASResponse.errorResponse(HttpServletResponse.SC_UNAUTHORIZED)
-                                .setError(OAuthError.TokenResponse.UNAUTHORIZED_CLIENT)
-                                .setErrorDescription(ErrorEnum.UNAUTHORIZED_CLIENT.getCode())
-                                .buildJSONMessage();
-                return new ResponseEntity(response.getBody(), HttpStatus.valueOf(response.getResponseStatus()));
-            }
-
-            String authCode = oauthRequest.getParam(OAuth.OAUTH_CODE);
-            // 检查验证类型，此处只检查AUTHORIZATION_CODE类型，其他的还有PASSWORD或REFRESH_TOKEN
-            if (oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE).equals(GrantType.AUTHORIZATION_CODE.toString())) {
-                if (!oAuthService.checkAuthCode(authCode)) {
-                    OAuthResponse response = OAuthASResponse
-                            .errorResponse(HttpServletResponse.SC_UNAUTHORIZED)
-                            .setError(OAuthError.TokenResponse.INVALID_GRANT)
-                            .setErrorDescription(ErrorEnum.UNAUTHORIZATION_CODE.getCode())
-                            .buildJSONMessage();
-                    return new ResponseEntity<byte []>(response.getBody().getBytes("UTF-8"), HttpStatus.valueOf(response.getResponseStatus()));
-                }
-            }
-
-            //生成Access Token
-            OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
-            final String accessToken = oauthIssuerImpl.accessToken();
-            oAuthService.addAccessToken(accessToken, oAuthService.getUsernameByAuthCode(authCode));
-
-            //生成OAuth响应
-            OAuthResponse response = OAuthASResponse
-                    .tokenResponse(HttpServletResponse.SC_OK)
-                    .setAccessToken(accessToken)
-                    .setExpiresIn(String.valueOf(oAuthService.getExpireIn()))
-                    .buildJSONMessage();
-
-            //根据OAuthResponse生成ResponseEntity
-            return new ResponseEntity(response.getBody(), HttpStatus.valueOf(response.getResponseStatus()));
-
-        } catch (OAuthProblemException e) {
-            //构建错误响应
-            OAuthResponse res = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST).error(e)
-                    .buildJSONMessage();
-            return new ResponseEntity(res.getBody(), HttpStatus.valueOf(res.getResponseStatus()));
-        }
-    }
-
+		try {
+			// 构建OAuth请求
+			OAuthTokenRequest oauthRequest = new OAuthTokenRequest(request);
+			// 检查客户端安全KEY是否正确
+			oAuthService.checkClientSecret(oauthRequest.getClientId(),
+					oauthRequest.getClientSecret());
+			String authCode = oauthRequest.getParam(OAuth.OAUTH_CODE);
+			// 检查验证类型，此处只检查AUTHORIZATION_CODE类型，其他的还有PASSWORD或REFRESH_TOKEN
+			if (oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE).equals(
+					GrantType.AUTHORIZATION_CODE.toString())) {
+				oAuthService.checkAuthCode(authCode);
+			}
+			// 生成Access Token
+			OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(
+					new MD5Generator());
+			final String accessToken = oauthIssuerImpl.accessToken();
+			oAuthService.addAccessToken(accessToken,
+					oAuthService.getUsernameByAuthCode(authCode));
+			// 生成OAuth响应
+			OAuthResponse response = OAuthASResponse
+					.tokenResponse(HttpServletResponse.SC_OK)
+					.setAccessToken(accessToken)
+					.setExpiresIn(String.valueOf(oAuthService.getExpireIn()))
+					.buildJSONMessage();
+			// 根据OAuthResponse生成ResponseEntity
+			return new ResponseEntity(response.getBody(),
+					HttpStatus.valueOf(response.getResponseStatus()));
+		} catch (OAuthProblemException e) {
+			return ExceptionHandler(e.getError(), e.getDescription());
+		}
+	}
+	private Object ExceptionHandler(String error, String description) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("error", error);
+		map.put("error_description", description);
+		return map;
+	}
 }

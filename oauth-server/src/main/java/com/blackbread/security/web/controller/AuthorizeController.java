@@ -49,7 +49,6 @@ public class AuthorizeController {
 	private OAuthService oAuthService;
 	@Autowired
 	private ClientService clientService;
-
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping("/authorize")
 	public Object authorize(Model model, HttpServletRequest request)

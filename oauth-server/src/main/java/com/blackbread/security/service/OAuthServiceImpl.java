@@ -9,6 +9,7 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 
+import com.blackbread.security.constant.ErrorEnum;
 import com.blackbread.security.dao.UserDao;
 import com.blackbread.security.entity.Client;
 import com.blackbread.security.utils.StringUtil;
@@ -57,8 +58,10 @@ public class OAuthServiceImpl implements OAuthService {
 	}
 
 	@Override
-	public boolean checkAuthCode(String authCode) {
-		return cache.get(authCode) != null;
+	public void checkAuthCode(String authCode) throws OAuthProblemException {
+		if(cache.get(authCode) == null)
+		throw OAuthProblemException.error(
+				OAuthError.TokenResponse.INVALID_GRANT,ErrorEnum.INVALID_GRANT.getDestcrption());
 	}
 
 	@Override
@@ -67,8 +70,10 @@ public class OAuthServiceImpl implements OAuthService {
 	}
 
 	@Override
-	public boolean checkClientSecret(String clientID,String clientSecret) {
-		return clientService.findByClientSecret(clientID,clientSecret) != null;
+	public void checkClientSecret(String clientID,String clientSecret) throws OAuthProblemException {
+		if( clientService.findByClientSecret(clientID,clientSecret) == null)
+			throw OAuthProblemException.error(
+					OAuthError.TokenResponse.UNAUTHORIZED_CLIENT, ErrorEnum.UNAUTHORIZED_CLIENT.getDestcrption());
 	}
 
 	@Override

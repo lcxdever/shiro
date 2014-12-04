@@ -22,7 +22,7 @@ public interface OAuthService {
 	public void addAccessToken(String accessToken, String username);
 
 	// 验证auth code是否有效
-	boolean checkAuthCode(String authCode);
+	void checkAuthCode(String authCode) throws OAuthProblemException;
 
 	// 验证access token是否有效
 	boolean checkAccessToken(String accessToken);
@@ -34,7 +34,8 @@ public interface OAuthService {
 	// auth code / access token 过期时间
 	long getExpireIn();
 
-	public boolean checkClientSecret(String clientID,String clientSecret);
+	public void checkClientSecret(String clientID, String clientSecret)
+			throws OAuthProblemException;
 
 	/**
 	 * 用于验证客户端url调用参数信息，并返回请求的客户端信息
